@@ -6,25 +6,23 @@ import Options from "./components/Options/Options.jsx";
 import { useState } from "react";
 import { useEffect } from "react";
 
-export default function App() {
-  const [values, setValues] = useState({
-    good: 0,
-    neutral: 0,
-    bad: 0,
-  });
-  useEffect(() => {
-    const storedValues = localStorage.getItem("feedbackValues");
-    if (storedValues) {
-      setValues(JSON.parse(storedValues));
-    }
-  }, []);
+const getLsvalue = () => {
+  const valueLS = localStorage.getItem("feedbackValues");
+  return valueLS !== null
+    ? JSON.parse(valueLS)
+    : {
+        good: 0,
+        neutral: 0,
+        bad: 0,
+      };
+};
 
-  const totalFeedback = Object.values(values).reduce(
-    (sum, value) => sum + value,
-    0
-  );
-  const positiveFeedback = Math.round((values.good / totalFeedback) * 100) || 0;
-  // console.log(totalFeedback);
+export default function App() {
+  const [values, setValues] = useState(getLsvalue);
+
+  useEffect(() => {
+    localStorage.setItem("feedbackValues", JSON.stringify(values));
+  }, [values]);
 
   const handleUpdateFeedback = (e) => {
     if (e.target === e.currentTarget) return;
@@ -38,7 +36,6 @@ export default function App() {
       }
 
       setValues(emptyState);
-      localStorage.setItem("feedbackValues", JSON.stringify(emptyState));
       return;
     }
 
@@ -46,8 +43,13 @@ export default function App() {
       ...v,
       [typeOfFeedback]: v[typeOfFeedback] + 1,
     }));
-    localStorage.setItem("feedbackValues", JSON.stringify(values));
   };
+
+  const totalFeedback = Object.values(values).reduce(
+    (sum, value) => sum + value,
+    0
+  );
+  const positiveFeedback = Math.round((values.good / totalFeedback) * 100) || 0;
 
   return (
     <>
