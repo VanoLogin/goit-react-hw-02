@@ -2,7 +2,7 @@ import "./App.css";
 import Description from "./components/Description/Description.jsx";
 import FeedBack from "./components/FeedBack/FeedBack.jsx";
 import Options from "./components/Options/Options.jsx";
-
+import Notification from "./components/Notification/Notification.jsx";
 import { useState } from "react";
 import { useEffect } from "react";
 
@@ -24,18 +24,13 @@ export default function App() {
     localStorage.setItem("feedbackValues", JSON.stringify(values));
   }, [values]);
 
-  const handleUpdateFeedback = (e) => {
-    if (e.target === e.currentTarget) return;
-
-    const typeOfFeedback = e.target.dataset.option;
-
+  const handleUpdateFeedback = (typeOfFeedback) => {
     if (typeOfFeedback === "reset") {
-      const emptyState = { ...values };
-      for (const key in emptyState) {
-        emptyState[key] = 0;
-      }
-
-      setValues(emptyState);
+      setValues({
+        good: 0,
+        neutral: 0,
+        bad: 0,
+      });
       return;
     }
 
@@ -64,11 +59,15 @@ export default function App() {
           handleUpdateFeedback={handleUpdateFeedback}
           totalFeedback={totalFeedback}
         />
-        <FeedBack
-          values={values}
-          totalFeedback={totalFeedback}
-          positiveFeedback={positiveFeedback}
-        />
+        {totalFeedback === 0 ? (
+          <Notification message="No FeedBack yet"></Notification>
+        ) : (
+          <FeedBack
+            values={values}
+            totalFeedback={totalFeedback}
+            positiveFeedback={positiveFeedback}
+          />
+        )}
       </div>
     </>
   );

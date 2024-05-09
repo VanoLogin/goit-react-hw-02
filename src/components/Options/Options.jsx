@@ -6,14 +6,23 @@ export default function Options({
   totalFeedback,
 }) {
   return (
-    <div className={styles.container} onClick={handleUpdateFeedback}>
+    <div className={styles.container}>
       {Object.keys(options).map((option, i) => (
-        <button key={i} data-option={option} type="button">
+        <button
+          key={i}
+          data-option={option}
+          onClick={() => handleUpdateFeedback(option)}
+          type="button"
+        >
           {option}
         </button>
       ))}
       {totalFeedback > 0 && (
-        <button type="button" data-option="reset">
+        <button
+          type="button"
+          data-option="reset"
+          onClick={() => handleUpdateFeedback("reset")}
+        >
           Reset
         </button>
       )}
